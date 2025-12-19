@@ -22,6 +22,7 @@ class CommunityListResource(Resource):
         ])
         
         
+    @jwt_required()
     def post(self):
         data = request.get_json()
         user = User.query.get_or_404(get_jwt_identity())
