@@ -1,6 +1,5 @@
 from datetime import datetime
 from app import db
-# from passlib.hash import bcrypt
 import uuid
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -21,15 +20,37 @@ class User(db.Model):
     reset_token_expiry = db.Column(db.DateTime, nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # def set_password(self, password: str):
-    #     self.password_hash = bcrypt.hash(password)
-
-    # def check_password(self, password: str) -> bool:
-    #     return bcrypt.verify(password, self.password_hash)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
         
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password) 
+        return check_password_hash(self.password_hash, password)
+    
+    
+class Community(db.Model):
+    __tablename__ = "communities"
+    
+    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    slug = db.Column(db.String(100), unique=True, nullable=False)
+    description = db.Column(db.Text)
+    creator_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    
+class CommunityMembership(db.Model):
+    __tablename__ = "community_memberships"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
+    community_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("communities.id"), nullable=False)
+    role = db.Column(db.String(20), default="member")
+    joined_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship("User", backref="community_memberships")
+    community = db.relationship("Community", backref="memberships")
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "community_id", name="unique_membership"),
+    )
