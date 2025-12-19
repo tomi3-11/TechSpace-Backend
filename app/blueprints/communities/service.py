@@ -45,3 +45,69 @@ class CommunityService:
             "message": "Comminuty created successfully",
             "slug": slug
         }, 201
+        
+        
+        
+    @staticmethod
+    def join_comminity(user, community):
+        existing = CommunityMembership.query.filter_by(
+            user_id=user.id,
+            community_id=community.id
+        ).first()
+        
+        if existing:
+            return {
+                "message": "Already a member"
+            }, 400
+            
+        membership = CommunityMembership(
+            user_id=user.id,
+            community_id=community.id
+        )
+        db.session.add(membership)
+        db.session.commit()
+        
+        return {
+            "message": "Joined a community"
+        }, 200
+        
+        
+    @staticmethod
+    def leave_community(user, community):
+        membership = CommunityMembership.query.filter_by(
+            user_id=user.id,
+            community_id=community.id
+        ).first()
+        
+        if not membership:
+            return {
+                "message": "Not a member"
+            }, 400
+            
+        if membership.role == "owner":
+            return {
+                "message": "Owner cannot leave a community"
+            }, 403
+            
+        db.session.delete(membership)
+        db.session.commit()
+        
+        return {
+            "message": "Left the community"
+        }, 200
+        
+        
+    @staticmethod
+    def list_members(community):
+        memberships = CommunityMembership.query.filter_by(
+            community_id=community.id
+        ).all()
+        
+        return [
+            {
+                "username": m.user.username,
+                "role": m.role,
+                "joined_at": m.joined_at.isoformat()
+            }
+            for m in memberships
+        ]
