@@ -23,7 +23,7 @@ class PostService:
             
         membership = CommunityMembership.query.filter_by(
             user_id=user.id,
-            community=community.id
+            community_id=community.id
         ).first()
         
         if not membership:

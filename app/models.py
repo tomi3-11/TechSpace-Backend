@@ -68,6 +68,8 @@ class Post(db.Model):
     author_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
     community_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("communities.id"), nullable=False)
     
+    score = db.Column(db.Integer, default=0)
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime,

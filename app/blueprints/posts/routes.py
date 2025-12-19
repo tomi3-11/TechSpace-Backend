@@ -16,7 +16,7 @@ class PostListCreateResource(Resource):
         posts = PostService.list_posts(community, post_type)
         return posts
     
-    @jwt_required
+    @jwt_required()
     def post(self, slug):
         user = User.query.get_or_404(get_jwt_identity())
         community = Community.query.filter_by(slug=slug).first_or_404()
@@ -45,4 +45,4 @@ class PostDetailResource(Resource):
         
 # endpoints
 api.add_resource(PostListCreateResource, "/communities/<string:slug>/posts/")
-api.add_resource(PostDetailResource, "/posts/<uuid:post_id>/")
+api.add_resource(PostDetailResource, "/<uuid:post_id>/")
