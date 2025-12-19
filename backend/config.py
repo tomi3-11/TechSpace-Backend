@@ -1,0 +1,22 @@
+import os
+import secrets
+
+
+class Config:
+    SECRET_KEY = secrets.token_urlsafe(32)
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_TRACK_MODIFICATION = False
+    
+    JWT_SECRET_KEY = secrets.token_hex(32)
+    
+    # Mail configs
+    MAIL_SERVER = os.getenv("MAIL_SERVER")
+    MAIL_PORT = int(os.getenv("MAIL_PORT", 587))
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+    MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
+
+    # Cache configs
+    CACHE_TYPE = "RedisCache"
+    CACHE_REDIS_URL = os.environ.get("REDIS_URL")
