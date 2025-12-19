@@ -1,5 +1,6 @@
 import os
 import secrets
+from datetime import timedelta
 
 
 class Config:
@@ -20,3 +21,11 @@ class Config:
     # Cache configs
     CACHE_TYPE = "RedisCache"
     CACHE_REDIS_URL = os.environ.get("REDIS_URL")
+    
+    
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)     
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)     
+    
+    JWT_TOKEN_LOCATION = ["headers"]
+    JWT_HEADER_NAME = "Authorization"
+    JWT_HEADER_TYPE = "Bearer"

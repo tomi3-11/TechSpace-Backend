@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timedelta
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_mail import Message
 from app import db, mail
 from app.models import User
@@ -11,10 +11,20 @@ AVATAR_API = "https://ui-avatars.com/api/?name={}&background=random"
 class AuthService:
     
     @staticmethod
+    def user_payload(user):
+        return {
+            "id": str(user.id),
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+            "avatar_rule": user.avatar_url
+        }
+    
+    @staticmethod
     def register_user(data):
-        if User.query.filter_by(email=data["email"]).first():
+        if User.query.filter(User.email == data["email"] | User.username == data["username"]).first():
             return {
-                "message": "Email already exists"
+                "message": "User already exists"
             }, 400
             
         avatar_url = AVATAR_API.format(data["username"])
@@ -42,10 +52,31 @@ class AuthService:
                 "message": "Invalid credentials"
             }, 401
             
+        access = create_access_token(identity=str(user.id))
+        refresh = create_refresh_token(identity=str(user.id))
             
-        token = create_access_token(identity=str(user.id))
         return {
-            "access_token": token
+            "user": AuthService.user_payload(user),
+            "tokens": {
+                "access": access,
+                "refresh": refresh
+            }
+        }, 200
+        
+        
+    @staticmethod
+    def refresh(identity):
+        user = User.query.get(identity)
+        access = create_access_token(identity=str(user.id))
+        return {
+            "access": access
+        },
+        
+        
+    @staticmethod
+    def logout():
+        return {
+            "message": "logged out successfully"
         }, 200
         
         
