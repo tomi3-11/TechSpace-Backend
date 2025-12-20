@@ -79,3 +79,22 @@ class Post(db.Model):
     
     author = db.relationship("User", backref="posts")
     community = db.relationship("Community", backref="posts")
+    
+    
+class Vote(db.Model):
+    __tablename__ = "votes"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
+    post_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("posts.id"), nullable=False)
+    value = db.Column(db.Integer, nullable=False) # +1 or -1
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "post_id", name="unique_user_post_vote"),
+    )
+    
+    user = db.relationship("User", backref="votes")
+    post = db.relationship("Post", backref="votes")
