@@ -36,10 +36,12 @@ def create_app(config_object="config.Config"):
     from app.blueprints.auth.routes import auth_bp
     from app.blueprints.communities.routes import communities_bp
     from app.blueprints.posts.routes import posts_bp
+    from app.blueprints.votes.routes import vote_bp
     
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(communities_bp)
     app.register_blueprint(posts_bp)
+    app.register_blueprint(vote_bp)
     
     return app
