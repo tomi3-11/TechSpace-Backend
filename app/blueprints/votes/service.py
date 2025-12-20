@@ -42,7 +42,7 @@ class VoteService:
         )
         
         post.score += value
-        db.session.add(value)
+        db.session.add(vote)
         db.session.commit()
         
         return {
