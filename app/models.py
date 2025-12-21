@@ -113,3 +113,33 @@ class Vote(db.Model):
     
     user = db.relationship("User", backref="votes")
     post = db.relationship("Post", backref="votes")
+    
+    
+class Comment(db.Model):
+    __tablename__ = "comments"
+    
+    id = db.Column(db.UUID(as_uuid=True), primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    
+    post_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("posts.id", nullable=False))
+    author_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
+    parent_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("comments"), nullable=True)
+    
+    post = db.relationship("Post", backref="comments")
+    author = db.relationship("User")
+    replies = db.relationship("Comment", backref=db.backref("parent", remote_side=[id]), lazy="dynamic")
+    
+    def to_dict(self, include_replies=True):
+        data = {
+            "id": self.id,
+            "content": self.content,
+            "author": self.author.username,
+            "post_id": self.post_id,
+            "parent_id": self.parent_id,
+            "created_at": self.created_at.isoformat()
+        }
+        if include_replies:
+            data["replies"] = [reply.to_dict() for reply in self.replies.order_by(Comment.created_at.asc())]
+        return data
