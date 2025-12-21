@@ -118,14 +118,14 @@ class Vote(db.Model):
 class Comment(db.Model):
     __tablename__ = "comments"
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True)
+    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
     
-    post_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("posts.id", nullable=False))
+    post_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("posts.id"),nullable=False)
     author_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
-    parent_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("comments"), nullable=True)
+    parent_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("comments.id"), nullable=True)
     
     post = db.relationship("Post", backref="comments")
     author = db.relationship("User")
