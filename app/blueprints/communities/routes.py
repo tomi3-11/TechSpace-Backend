@@ -14,6 +14,7 @@ class CommunityListResource(Resource):
         Communities = Community.query.all()
         return jsonify([
             {
+                "id": c.id,
                 "name": c.name,
                 "slug": c.slug,
                 "description": c.description,
