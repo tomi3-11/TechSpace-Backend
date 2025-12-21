@@ -22,7 +22,11 @@ class CommentService:
     @staticmethod
     def get_comments(post_id):
         post = Post.query.get_or_404(post_id)
-        return post.comments.filter_by(parent_id=None).order_by(Comment.created_at.asc()).all()
+        
+        comments = (
+            Comment.query.filter_by(post_id=post_id, parent_id=None).order_by(Comment.created_at.asc()).all()
+        )
+        return comments
     
     
     @staticmethod

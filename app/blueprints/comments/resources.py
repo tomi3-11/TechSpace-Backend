@@ -16,10 +16,10 @@ def comments_response(comments):
 class CommentListResource(Resource):
     @jwt_required()
     def post(self, post_id):
-        user_id = User.query.get_or_404(get_jwt_identity())
+        user = User.query.get_or_404(get_jwt_identity())
         data = request.get_json()
         content = data.get("content")
-        comment = CommentService.create_comment(user_id, post_id, content)
+        comment = CommentService.create_comment(user.id, post_id, content)
         return comment_response(comment)
     
     
@@ -31,16 +31,16 @@ class CommentListResource(Resource):
 class CommentResource(Resource):
     @jwt_required()
     def put(self, comment_id):
-        user_id = User.query.get_or_404(get_jwt_identity())
+        user = User.query.get_or_404(get_jwt_identity())
         data = request.get_json()
         content = data.get("content")
-        comment = CommentService.update_comment(comment_id, user_id, content)
+        comment = CommentService.update_comment(comment_id, user.id, content)
         return comment_response(comment)
     
     @jwt_required()
     def delete(self, comment_id):
-        user_id = User.query.get_or_404(get_jwt_identity())
-        CommentService.delete_comment(comment_id, user_id)
+        user = User.query.get_or_404(get_jwt_identity())
+        CommentService.delete_comment(comment_id, user.id)
         return {
             "message": "Comment deleted successfully"
         }, 200
@@ -49,8 +49,8 @@ class CommentResource(Resource):
 class CommentReplyResource(Resource):
     @jwt_required()
     def post(self, comment_id):
-        user_id = User.query.get_or_404(get_jwt_identity())
+        user = User.query.get_or_404(get_jwt_identity())
         data = request.get_json()
         content = data.get("content")
-        reply = CommentService.add_reply(comment_id, user_id, content)
+        reply = CommentService.add_reply(comment_id, user.id, content)
         return comment_response(reply)
