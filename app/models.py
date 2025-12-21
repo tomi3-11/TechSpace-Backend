@@ -80,16 +80,19 @@ class Post(db.Model):
     author = db.relationship("User", backref="posts")
     community = db.relationship("Community", backref="posts")
     
+    is_active = db.Column(db.Boolean, default=True)
+    
     def to_dict(self):
         return {
             "id": self.id,
             "title": self.title,
             "content": self.content,
-            "type": self.type,
+            "type": self.post_type,
             "score": self.score,
             "author": self.author.username,
             "community": self.community.slug,
-            "created_at": self.created_at.isoformat()
+            "created_at": self.created_at.isoformat(),
+            "is_active": self.is_active
         }
     
     
