@@ -39,6 +39,7 @@ def create_app(config_object="config.Config"):
     from app.blueprints.votes.routes import vote_bp
     from app.blueprints.feeds.routes import feeds_bp
     from app.blueprints.comments import comments_bp
+    from app.blueprints.projects import projects_bp
     
     
     app.register_blueprint(auth_bp)
@@ -47,5 +48,6 @@ def create_app(config_object="config.Config"):
     app.register_blueprint(vote_bp)
     app.register_blueprint(feeds_bp)
     app.register_blueprint(comments_bp)
+    app.register_blueprint(projects_bp)
     
     return app
