@@ -210,3 +210,30 @@ class ProjectVote(db.Model):
     __table_args__ = (
         db.UniqueConstraint("user_id", "project_id", name="unique_project_vote"),
     )
+    
+    
+class ProjectApplication(db.Model):
+    __tablename__ = "project_applications"
+    
+    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
+    
+    motivation = db.Column(db.Text, nullable=False)
+    skills = db.Column(db.Text, nullable=True)
+    
+    status = db.Column(
+        db.Enum("PENDING", "ACCEPTED", "REJECTED", name="application_status"),
+        default="PENDING",
+        nullable=False
+    )
+    
+    reviewed_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    reviewed_at = db.Column(db.DateTime)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "project_id", name="unique_project_application"),
+    )
