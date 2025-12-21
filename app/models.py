@@ -80,6 +80,18 @@ class Post(db.Model):
     author = db.relationship("User", backref="posts")
     community = db.relationship("Community", backref="posts")
     
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "type": self.type,
+            "score": self.score,
+            "author": self.author.username,
+            "community": self.community.slug,
+            "created_at": self.created_at.isoformat()
+        }
+    
     
 class Vote(db.Model):
     __tablename__ = "votes"
