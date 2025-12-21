@@ -2,6 +2,8 @@ from datetime import datetime
 from app import db
 import uuid
 from werkzeug.security import check_password_hash, generate_password_hash
+from enum import Enum
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -143,3 +145,68 @@ class Comment(db.Model):
         if include_replies:
             data["replies"] = [reply.to_dict() for reply in self.replies.order_by(Comment.created_at.asc())]
         return data
+    
+    
+class ProjectStatus(Enum):
+    PROPOSED = "PROPOSED"
+    APPROVED = "APPROVED"
+    RECRUITING = "RECRUITING"
+    ACTIVE = "ACTIVE"
+    COMPLETED = "COMPLETED"
+    REJECTED = "REJECTED"
+    
+    
+class Project(db.Model):
+    __tablename__ = "projects"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    problem_statement = db.Column(db.Text, nullable=False)
+    proposed_solution = db.Column(db.Text, nullable=False)
+    sector = db.Column(db.String(100), nullable=False)
+    
+    status = db.Column(
+        db.Enum(ProjectStatus),
+        default=ProjectStatus.PROPOSED,
+        nullable=False
+    )
+    
+    vote_score = db.Column(db.Integer, default=0)
+    proposal_deadline = db.Column(db.DateTime, nullable=False)
+    
+    owner_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
+    community_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("communities.id"), nullable=False)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    owner = db.relationship("User", backref=db.backref("own_projects", lazy="dynamic"))
+    community = db.relationship("Community", backref=db.backref("projects", lazy="dynamic"))
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "problem_statement": self.problem_statement,
+            "proposed_solution": self.proposed_solution,
+            "sector": self.sector,
+            "status": self.status.value,
+            "vote_score": self.vote_score,
+            "proposal_deadline": self.proposal_deadline.isoformat(),
+            "community": self.community.name if self.community else None,
+            "owner": self.owner.username if self.owner else None,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+class ProjectVote(db.Model):
+    __tablename__ = "project_votes"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.Integer, nullable=False)
+    
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
+    
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "project_id", name="unique_project_vote"),
+    )
