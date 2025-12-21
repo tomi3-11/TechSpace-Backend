@@ -19,7 +19,7 @@ class FeedService:
         query = Post.query.filter(Post.is_active.is_(True))
         
         if post_type:
-            query = query.filter(Post.type == post_type)
+            query = query.filter(Post.post_type == post_type)
             
         return cls.paginate(
             query.order_by(Post.created_at.desc()),
@@ -64,7 +64,7 @@ class FeedService:
     def proposals(cls, page, per_page):
         query = Post.query.filter(
             Post.is_active.is_(True),
-            Post.type == "proposal"
+            Post.post_type == "proposal"
         )
         
         return cls.paginate(
