@@ -1,6 +1,10 @@
-from flask import request, jsonify
-from flask_restful import Resource
+from flask import Blueprints, request, jsonify
+from flask_restful import Resource, Api
 from app.blueprints.feeds.service import FeedService
+
+
+feeds_bp = Blueprints("feeds", __name__, url_prefix="/api/v1/feeds/")
+api = Api(feeds_bp)
 
 
 def feed_response(pagination):
@@ -65,3 +69,11 @@ class CommunityFeedResource(Resource):
         return feed_response(
             FeedService.community(slug, page, per_page)
         )
+        
+        
+# endpoints
+api.add_resource(LatestFeedResource, "/latest/")
+api.add_resource(TopFeedResource, "/top/")
+api.add_resource(TrendingFeedResource, "/trending/")
+api.add_resource(ProposalFeedResource, "/proposals/")
+api.add_resource(CommunityFeedResource, "/community/<string:slug>")
