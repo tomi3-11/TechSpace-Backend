@@ -234,6 +234,21 @@ class ProjectApplication(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+    author = db.relationship("User", backref="project_applications")
+    project = db.relationship("Project", backref="project_applications")
+    
     __table_args__ = (
         db.UniqueConstraint("user_id", "project_id", name="unique_project_application"),
     )
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "motivation": self.motivation,
+            "skills": self.skills,
+            "status": self.status,
+            "reviewed_by": self.author.username,
+            "project": self.project.title,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "reviewed_at": self.reviewed_at.isoformat() if self.reviewed_at else None,
+        }
