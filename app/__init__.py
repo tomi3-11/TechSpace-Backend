@@ -40,24 +40,9 @@ def create_app(config_object="config.Config"):
     
     scheduler.start()
     
-    # Register Blueprints
-    from app.blueprints.auth.routes import auth_bp
-    from app.blueprints.communities.routes import communities_bp
-    from app.blueprints.posts.routes import posts_bp
-    from app.blueprints.votes.routes import vote_bp
-    from app.blueprints.feeds.routes import feeds_bp
-    from app.blueprints.comments import comments_bp
-    from app.blueprints.projects import projects_bp
-    from app.blueprints.project_application import project_applications_bp
+    # Register versioned Blueprints
+    from app.blueprints.v1 import v1_bp
     
-    
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(communities_bp)
-    app.register_blueprint(posts_bp)
-    app.register_blueprint(vote_bp)
-    app.register_blueprint(feeds_bp)
-    app.register_blueprint(comments_bp)
-    app.register_blueprint(projects_bp)
-    app.register_blueprint(project_applications_bp)
+    app.register_blueprint(v1_bp, url_prefix="/api/v1")
     
     return app
