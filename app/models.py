@@ -215,7 +215,7 @@ class ProjectVote(db.Model):
 class ProjectApplication(db.Model):
     __tablename__ = "project_applications"
     
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = db.Column(db.Integer, primary_key=True)
     
     user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
@@ -229,13 +229,14 @@ class ProjectApplication(db.Model):
         nullable=False
     )
     
-    reviewed_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    reviewed_by_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=True)
     reviewed_at = db.Column(db.DateTime)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    author = db.relationship("User", backref="project_applications")
+    author = db.relationship("User", foreign_keys=[user_id], backref="project_applications")
     project = db.relationship("Project", backref="project_applications")
+    reviewer = db.relationship("User", foreign_keys=[reviewed_by_id])
     
     __table_args__ = (
         db.UniqueConstraint("user_id", "project_id", name="unique_project_application"),
@@ -247,8 +248,10 @@ class ProjectApplication(db.Model):
             "motivation": self.motivation,
             "skills": self.skills,
             "status": self.status,
-            "reviewed_by": self.author.username,
-            "project": self.project.title,
+            "applicant": self.author.username if self.author else None,
+            "project": self.project.title if self.project else None,
+            "reviewed_by": self.reviewer.username if self.reviewer else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "reviewed_at": self.reviewed_at.isoformat() if self.reviewed_at else None,
         }
+
