@@ -22,32 +22,32 @@ class ProjectApplicationCreateResource(Resource):
             user.id, project_id, motivation, skills
         )
         
-        return jsonify(application.to_dict()), 201
+        if isinstance(application, tuple):
+            return application
+        
+        return application.to_dict(), 201
     
-    def get(self):
-        applications = ProjectApplicationService.get_application_list()
-        return jsonify([a.to_dict() for a in applications]), 200
+    def get(self, project_id):
+        applications = ProjectApplicationService.get_application_for_project(project_id)
+        return [a.to_dict() for a in applications], 200
     
-class SingleApplicationResource(Resource):
-    def get(self, application_id):
-        application = ProjectApplicationService.get_application(application_id)
-        return jsonify(application.to_dict())
-    
-    
-class ProjectReviewApplicationReviewResource(Resource):
+class ProjectApplicationReviewResource(Resource):
     @jwt_required()
     def post(self, project_id, application_id):
         user = User.query.get_or_404(get_jwt_identity())
         data = request.get_json()
         decision = data.get("status")
         
-        application = ProjectApplicationService(
+        application = ProjectApplicationService.review(
             reviewer_id=user.id,
             application_id=application_id,
             decision=decision
         )
         
-        return jsonify(application.to_dict()), 200
+        if isinstance(application, tuple):
+            return application
+        
+        return application.to_dict(), 200
     
     
 class CurrentUserApplicationsResource(Resource):
@@ -55,5 +55,5 @@ class CurrentUserApplicationsResource(Resource):
     def get(self):
         user = User.query.get_or_404(get_jwt_identity())
         applications = ProjectApplicationService.get_user_applications(user.id)
-        return jsonify([a.to_dic() for a in applications]), 200
+        return [a.to_dict() for a in applications], 200
         
