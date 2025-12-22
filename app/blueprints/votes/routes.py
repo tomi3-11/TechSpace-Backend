@@ -5,7 +5,7 @@ from app.models import User, Post
 from app.blueprints.votes.service import VoteService
 
 
-vote_bp = Blueprint("votes", __name__, url_prefix="/api/v1/votes/")
+vote_bp = Blueprint("votes", __name__)
 api = Api(vote_bp)
 
 

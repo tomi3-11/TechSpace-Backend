@@ -5,7 +5,7 @@ from app.models import User, Community
 from app.blueprints.communities.service import CommunityService
 
 
-communities_bp = Blueprint("communities", __name__, url_prefix="/api/v1/communities/")
+communities_bp = Blueprint("communities", __name__)
 api = Api(communities_bp)
 
 

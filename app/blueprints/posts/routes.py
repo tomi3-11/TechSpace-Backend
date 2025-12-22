@@ -5,7 +5,7 @@ from app.models import User, Community, Post
 from app.blueprints.posts.service import PostService
 
 
-posts_bp = Blueprint("posts", __name__, url_prefix="/api/v1/posts/")
+posts_bp = Blueprint("posts", __name__)
 api = Api(posts_bp)
 
 

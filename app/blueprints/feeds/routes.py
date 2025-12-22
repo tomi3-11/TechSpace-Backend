@@ -3,7 +3,7 @@ from flask_restful import Resource, Api
 from app.blueprints.feeds.service import FeedService
 
 
-feeds_bp = Blueprint("feeds", __name__, url_prefix="/api/v1/feeds/")
+feeds_bp = Blueprint("feeds", __name__)
 api = Api(feeds_bp)
 
 
