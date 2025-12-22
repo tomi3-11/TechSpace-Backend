@@ -1,7 +1,11 @@
 from app import create_app, db
 from dotenv import load_dotenv
+import os
 
-load_dotenv()
+load_dotenv(".env")
+
+if os.environ.get("FLASK_ENV") == "production":
+    load_dotenv(".env.prod", override=True)
 
 app = create_app()
 
