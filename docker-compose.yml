@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: techmspace_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: techmspace_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+
+  api:
+    build: .
+    container_name: techmspace_api
+    restart: always
+    env_file:
+      - .env.prod
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "5000:5000"
+    command: ["gunicorn", "-c", "gunicorn_config.py", "wsgi:app"]
+
+volumes:
+  postgres_data:
