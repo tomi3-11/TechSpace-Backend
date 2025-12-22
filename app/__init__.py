@@ -7,6 +7,7 @@ from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from apscheduler.schedulers.background import BackgroundScheduler
+from flask_cors import CORS
 
 
 db = SQLAlchemy()
@@ -21,6 +22,13 @@ scheduler = BackgroundScheduler()
 def create_app(config_object="config.Config"):
     app = Flask(__name__)
     app.config.from_object(config_object)
+    
+    # Enable CORS
+    CORS(
+        app,
+        resources={r"/api/v1/*": {"origin": "*"}},
+        supports_credentials=True
+    )
     
     
     db.init_app(app)
