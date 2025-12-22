@@ -31,14 +31,15 @@ def create_app(config_object="config.Config"):
     )
     
     
+    jwt.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
-    jwt.init_app(app)
     mail.init_app(app)
     cache.init_app(app)
     limiter.init_app(app)
     
-    scheduler.start()
+    if not app.config.get("TESTING"):
+        scheduler.start()
     
     # Register versioned Blueprints
     from app.blueprints.v1 import v1_bp
