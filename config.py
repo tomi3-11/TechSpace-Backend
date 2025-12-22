@@ -21,6 +21,7 @@ class Config:
     # Cache configs
     CACHE_TYPE = "RedisCache"
     CACHE_REDIS_URL = os.environ.get("REDIS_URL")
+    RATELIMIT_STORAGE_URI = os.environ.get("REDIS_URL")
     
     
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)     
@@ -34,5 +35,9 @@ class Config:
 class TestConfig:
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    SQLALCHEMY_TRACK_MODIFICATION = False
-    JWT_SECRET_TOKEN = "test-secret"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY") or "jwt-test-secret"
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "test-secret-key"
+    RATELIMIT_STORAGE_URI = "memory://"
+    CACHE_TYPE = "SimpleCache"
+
