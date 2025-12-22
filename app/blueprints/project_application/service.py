@@ -33,13 +33,13 @@ class ProjectApplicationService:
         db.session.commit()
         
         return application
-    
-    
+        
+        
     @staticmethod
-    def get_application_list():
-        return ProjectApplication.query.order_by(
-            ProjectApplication.created_at.desc()
-        ).all()
+    def get_application_for_project(project_id):
+        return ProjectApplication.query.filter_by(
+            project_id=project_id
+        ).order_by(ProjectApplication.created_at.desc()).all()
         
        
     @staticmethod
@@ -47,7 +47,9 @@ class ProjectApplicationService:
         application = ProjectApplication.query.get_or_404(application_id)
         project = application.project
         
-        if project.owner_id != reviewer_id:
+        if (
+            project.owner_id != reviewer_id or application.reviewer.role in ("MODERATOR", "ADMIN")
+        ):
             abort(403, "Not authorized to review applications")
             
         if decision not in ("ACCEPTED", "REJECTED"):

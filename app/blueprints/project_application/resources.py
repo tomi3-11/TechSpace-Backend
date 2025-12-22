@@ -27,6 +27,7 @@ class ProjectApplicationCreateResource(Resource):
         
         return application.to_dict(), 201
     
+    @jwt_required()
     def get(self, project_id):
         applications = ProjectApplicationService.get_application_for_project(project_id)
         return [a.to_dict() for a in applications], 200
