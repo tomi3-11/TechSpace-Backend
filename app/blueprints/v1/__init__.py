@@ -11,6 +11,7 @@ from app.blueprints.feeds.routes import feeds_bp
 from app.blueprints.comments import comments_bp
 from app.blueprints.projects import projects_bp
 from app.blueprints.project_application import project_applications_bp
+from app.blueprints.health import health_bp
 
 
 v1_bp.register_blueprint(auth_bp, url_prefix="/auth/")
@@ -21,3 +22,4 @@ v1_bp.register_blueprint(feeds_bp, url_prefix="/feeds/")
 v1_bp.register_blueprint(comments_bp, url_prefix="/comments/")
 v1_bp.register_blueprint(projects_bp, url_prefix="/projects/")
 v1_bp.register_blueprint(project_applications_bp, url_prefix="/applications/")
+v1_bp.register_blueprint(health_bp)
