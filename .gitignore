@@ -15,3 +15,13 @@ wheels/
 
 #DB
 migrations/
+
+
+# SSL certificates (NEVER COMMIT)
+nginx/certs/
+nginx/www/
+
+# Certbot
+certbot/
+letsencrypt/
+
