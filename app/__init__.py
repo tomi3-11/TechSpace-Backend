@@ -8,6 +8,8 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_cors import CORS
+from redis import Redis
+import os
 
 
 db = SQLAlchemy()
@@ -17,6 +19,12 @@ mail = Mail()
 cache = Cache()
 limiter = Limiter(key_func=get_remote_address)
 scheduler = BackgroundScheduler()
+redis_client = Redis(
+    host=os.environ.get("REDIS_HOST"),
+    port=os.environ.get("REDIS_PORT"),
+    db=os.environ.get("REDIS_DB"),
+    socket_timeout=5
+)
 
 
 def create_app(config_object="config.Config"):
