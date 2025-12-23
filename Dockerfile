@@ -10,7 +10,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 RUN apt-get update && \
-    apt-get install -y gcc libpq-dev postgresql-client redis-tools && \
+    apt-get install -y gcc libpq-dev postgresql-client redis-tools curl && \
     pip install --upgrade pip && \
     pip install -r requirements.txt && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
