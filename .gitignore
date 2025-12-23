@@ -14,7 +14,7 @@ wheels/
 .env.prod 
 
 #DB
-migrations/
+
 
 
 # SSL certificates (NEVER COMMIT)
