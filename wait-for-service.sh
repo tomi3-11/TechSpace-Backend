@@ -11,6 +11,9 @@ until pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -d 
   sleep 2
 done
 
+echo "Running migrations..."
+flask db upgrade
+
 echo "PostgreSQL is ready!"
 
 echo "Waiting for Redis to be ready..."
