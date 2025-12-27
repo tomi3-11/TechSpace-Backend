@@ -108,10 +108,12 @@ class AuthService:
         
         db.session.commit()
         
+        frontend = f"http://localhost:3000/auth/reset-password?token={token}"
+        
         msg = Message(
             subject="Password Reset",
             recipients=[user.email],
-            body=f"Use this token to reset your password: {token}"
+            body=f"Use this link to reset your password: {frontend}"
         )
         mail.send(msg)
         
