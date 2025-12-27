@@ -33,8 +33,8 @@ POST `/api/v1/auth/login`
 ```
 Save:
 
-- access_token (Alice)
-- refresh_token (Alice)
+- `access_token` (Alice)
+- `refresh_token` (Alice)
 
 Repeat for Bob.
 
@@ -88,13 +88,21 @@ Expected:
 ```json
 [
   {
+    "id": "uuid-string-here",
     "name": "Kenya Devs",
     "slug": "kenya-devs",
     "description": "Developers solving local problems",
-    "created_at": "..."
+    "created_at": "...",
+    "is_member": true,
+    "total_members": 1
   }
 ]
+
 ```
+
+### Notes
+  - is_member: true if the current user (Alice or Bob) is a member
+  - total_members: total number of members in the community
 
 - Community Detail 
 
@@ -103,11 +111,15 @@ GET `/api/v1/communities/kenya-devs/`
 Expected
 ```json
 {
+  "id": "uuid-string-here",
   "name": "Kenya Devs",
   "slug": "kenya-devs",
   "description": "Developers solving local problems",
-  "created_at": "..."
+  "created_at": "...",
+  "is_member": true,
+  "total_members": 1
 }
+
 ```
 
 - Join Community (Bob)
