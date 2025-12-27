@@ -23,6 +23,7 @@ We will create multiple posts to test filters and ordering.
 #### Proposal Post (Alice)
 POST `/api/v1/posts/communities/kenya-devs/posts/` <br>
 Authorization: Bearer <ALICE_TOKEN>
+Content-Type: application/json
 
 ```json
 {
@@ -32,6 +33,13 @@ Authorization: Bearer <ALICE_TOKEN>
 }
 ```
 Expected: `201` Created
+```json
+{
+  "message": "Post created successfully",
+  "post_id": "uuid‑string"
+}
+
+```
 
 #### Discussion Post (Alice)
 ```json
@@ -78,12 +86,47 @@ Ordered newest → oldest
 ```json
 [
   {
-    "id": "...",
-    "title": "Open-source contribution culture",
-    "post_type": "discussion"
+    "id": "uuid‑string",
+    "title": "Open‑source contribution culture",
+    "post_type": "discussion",
+    "score": 0,
+    "author": "bob",
+    "community": "kenya‑devs",
+    "created_at": "...",
+    "user_vote": null
   },
-  ...
+  {
+    "id": "uuid‑string",
+    "title": "Clinic Appointment Booking System",
+    "post_type": "proposal",
+    "score": 0,
+    "author": "bob",
+    "community": "kenya‑devs",
+    "created_at": "...",
+    "user_vote": null
+  },
+  {
+    "id": "uuid‑string",
+    "title": "Tech gaps in rural education",
+    "post_type": "discussion",
+    "score": 0,
+    "author": "alice",
+    "community": "kenya‑devs",
+    "created_at": "...",
+    "user_vote": null
+  },
+  {
+    "id": "uuid‑string",
+    "title": "National Student Records System",
+    "post_type": "proposal",
+    "score": 0,
+    "author": "alice",
+    "community": "kenya‑devs",
+    "created_at": "...",
+    "user_vote": null
+  }
 ]
+
 ```
 
 4. FILTER POSTS BY TYPE
@@ -128,15 +171,17 @@ GET `/api/v1/posts/<POST_ID>/`
 Expected:
 ```json
 {
-  "id": "...",
+  "id": "uuid‑string",
   "title": "Clinic Appointment Booking System",
-  "content": "...",
+  "content": "Simple mobile‑first booking system for public clinics.",
   "post_type": "proposal",
   "score": 0,
   "author": "bob",
-  "community": "kenya-devs",
-  "created_at": "..."
+  "community": "kenya‑devs",
+  "created_at": "...",
+  "user_vote": null
 }
+
 ```
 
 6. AUTH & PERMISSION TESTS
