@@ -10,6 +10,7 @@ api = Api(posts_bp)
 
 
 class PostListCreateResource(Resource):
+    @jwt_required(optional=True)
     def get(self, slug):
         community = Community.query.filter_by(slug=slug).first_or_404()
         post_type = request.args.get("type")
@@ -35,6 +36,7 @@ class PostListCreateResource(Resource):
     
     
 class PostDetailResource(Resource):
+    @jwt_required(optional=True)
     def get(self, post_id):
         post = Post.query.get_or_404(post_id)
         

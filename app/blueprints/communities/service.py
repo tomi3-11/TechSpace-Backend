@@ -23,7 +23,7 @@ class CommunityService:
         ).count()
             
         return {
-            "id": community.id,
+            "id": str(community.id),
             "name": community.name,
             "slug": community.slug,
             "description": community.description,

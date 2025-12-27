@@ -10,6 +10,7 @@ api = Api(communities_bp)
 
 
 class CommunityListResource(Resource):
+    @jwt_required(optional=True)
     def get(self):
         user = None
         
@@ -32,6 +33,7 @@ class CommunityListResource(Resource):
     
     
 class CommunityDetailResource(Resource):
+    @jwt_required(optional=True)
     def get(self, slug):
         community = Community.query.filter_by(slug=slug).first_or_404()
         
