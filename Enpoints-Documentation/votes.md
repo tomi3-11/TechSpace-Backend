@@ -36,6 +36,7 @@ Assume these exist:
 
 - `POST_ID_4`
 
+Full URL example: `http://127.0.0.1:5000/api/v1/votes/posts/58864af4-c4ec-4a50-87bc-501aeda07adf/vote/`
 1. VOTE ENDPOINT (ONLY ONE)
 
 POST `/api/v1/votes/posts/<post_id>/vote/`
@@ -57,7 +58,7 @@ Content-Type: `application/json`
 
 - Alice Upvotes a Post
 
-POST `/api/v1/posts/posts/POST_ID_1/vote/`
+POST `/api/v1/votes/posts/<post_id>/vote/`
 ```json
 { "value": 1 }
 ```
@@ -65,8 +66,11 @@ POST `/api/v1/posts/posts/POST_ID_1/vote/`
 Expected Response:
 ```json
 {
-  "message": "Vote recorded"
+  "message": "Vote recorded",
+  "new_score": 1,
+  "user_vote": 1
 }
+
 ```
 
 
@@ -85,8 +89,11 @@ Same request again.
 Expected:
 ```json
 {
-  "message": "Vote removed"
+  "message": "Vote removed",
+  "new_score": 0,
+  "user_vote": 0
 }
+
 ```
 
 
@@ -109,16 +116,26 @@ POST `/api/v1/votes/posts/POST_ID_1/vote/`
 
 Expected:
 ```json
-{ "message": "Vote recorded" }
+{
+  "message": "Vote recorded",
+  "new_score": -1,
+  "user_vote": -1
+}
+
 ```
 
 * `post`.`score` = `-1`
 
 - Bob Downvotes Again (Remove)
 
-Expected:
+Expected: `200`
 ```json
-{ "message": "Vote removed" }
+{
+  "message": "Vote removed",
+  "new_score": 0,
+  "user_vote": 0
+}
+
 ```
 
 * `post`.`score` = `0`
@@ -140,8 +157,11 @@ Expected:
 Expected
 ```json
 {
-  "message": "Vote updated"
+  "message": "Vote updated",
+  "new_score": -1,
+  "user_vote": -1
 }
+
 ```
 
 #### Score Calculation
@@ -169,14 +189,23 @@ Alice (-1) + Bob (+1) = 0
 
 6. VERIFY VIA POST DETAIL ENDPOINT
 
-GET `/api/v1/votes/posts/POST_ID_1/`
+GET `/api/v1/posts/POST_ID_1/`
 
 
 Expected:
 ```json
 {
-  "score": 0
+  "id": "uuid",
+  "title": "...",
+  "content": "...",
+  "post_type": "...",
+  "score": 0,
+  "author": "...",
+  "community": "kenya‑devs",
+  "created_at": "...",
+  "user_vote": 0
 }
+
 ```
 
 7. INVALID INPUT TESTS
