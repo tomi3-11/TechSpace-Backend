@@ -159,6 +159,38 @@ Responses:
 
 * `200 OK`
 * `400 Voting closed`
+```json
+{
+  "message": "Vote cast successfully",
+  "new_score": 5,
+  "user_vote": 1
+}
+
+```
+Update Existing Vote
+```json
+{
+  "message": "Vote updated",
+  "new_score": 3,
+  "user_vote": -1
+}
+```
+Remove Vote (same vote toggled)
+```json
+{
+  "message": "Vote removed",
+  "new_score": 2,
+  "user_vote": null
+}
+
+```
+Error (Voting Closed)
+```json
+{
+  "message": "Voting period has ended"
+}
+
+```
 
 ---
 
