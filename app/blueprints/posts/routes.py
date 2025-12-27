@@ -13,8 +13,16 @@ class PostListCreateResource(Resource):
     def get(self, slug):
         community = Community.query.filter_by(slug=slug).first_or_404()
         post_type = request.args.get("type")
+        
+        user = None
+        if get_jwt_identity():
+            user = User.query.get_or_404(get_jwt_identity())
+            
         posts = PostService.list_posts(community, post_type)
-        return posts
+        return [
+            PostService.serialize_post(p, user)
+            for p in posts
+        ]
     
     @jwt_required()
     def post(self, slug):
@@ -30,16 +38,11 @@ class PostDetailResource(Resource):
     def get(self, post_id):
         post = Post.query.get_or_404(post_id)
         
-        return jsonify({
-            "id": str(post.id),
-            "title": post.title,
-            "content": post.content,
-            "post_type": post.post_type,
-            "score": post.score,
-            "author": post.author.username,
-            "community": post.community.slug,
-            "created_at": post.created_at.isoformat()
-        })
+        user = None
+        if get_jwt_identity():
+            user = User.query.get_or_404(get_jwt_identity())
+            
+        return PostService.serialize_post(post, user)
         
         
         

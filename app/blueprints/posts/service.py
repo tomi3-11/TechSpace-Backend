@@ -1,9 +1,31 @@
 from app import db
-from app.models import Post, CommunityMembership
+from app.models import Post, CommunityMembership, Vote
 
 ALLOWED_POST_TYPES = {"discussion", "proposal"}
 
 class PostService:
+    
+    @staticmethod
+    def serialize_post(post, user=None):
+        user_vote = None
+        if user:
+            vote = Vote.query.filter_by(
+                user_id=user.id,
+                post_id=post.id,
+            ).first()
+            user_vote = vote.value if vote else None
+            
+        return {
+            "id": str(post.id),
+            "title": post.title,
+            "content": post.content,
+            "post_type": post.post_type,
+            "score": post.score,
+            "author": post.author.username,
+            "community": post.community.slug,
+            "created_at": post.created_at.isoformat(),
+            "user_vote": user_vote
+        }
     
     @staticmethod
     def create_post(user, community, data):
