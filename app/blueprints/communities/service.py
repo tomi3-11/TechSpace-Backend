@@ -6,6 +6,26 @@ from slugify import slugify
 class CommunityService:
     
     @staticmethod
+    def serialize_community(community, user=None):
+        is_member = False
+        if user:
+            is_member = bool(
+                CommunityMembership.query.filter_by(
+                    user_id=user.id,
+                    community_id=community.id
+                ).first()
+            )
+            
+        return {
+            "id": community.id,
+            "name": community.name,
+            "slug": community.slug,
+            "description": community.description,
+            "created_at": community.created_at.isoformat(),
+            "is_member": is_member
+        }
+    
+    @staticmethod
     def create_community(user, data):
         name = data.get("name")
         description = data.get("description", "")

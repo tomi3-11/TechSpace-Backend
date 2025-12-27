@@ -11,16 +11,16 @@ api = Api(communities_bp)
 
 class CommunityListResource(Resource):
     def get(self):
-        Communities = Community.query.all()
-        return jsonify([
-            {
-                "id": c.id,
-                "name": c.name,
-                "slug": c.slug,
-                "description": c.description,
-                "created_at": c.created_at.isoformat()
-            } for c in Communities
-        ])
+        user = None
+        
+        if get_jwt_identity():
+            user = User.query.get_or_404(get_jwt_identity())
+            
+        communities = Community.query.all()
+        return [
+            CommunityService.serialize_community(c, user)git 
+            for c in communities
+        ]
         
         
     @jwt_required()
