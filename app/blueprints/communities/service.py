@@ -1,6 +1,7 @@
 from app import db
 from app.models import Community, CommunityMembership
 from slugify import slugify
+from sqlalchemy import func
 
 
 class CommunityService:
@@ -16,13 +17,19 @@ class CommunityService:
                 ).first()
             )
             
+        # total_members
+        total_members = CommunityMembership.query.filter_by(
+            community_id=community.id
+        ).count()
+            
         return {
             "id": community.id,
             "name": community.name,
             "slug": community.slug,
             "description": community.description,
             "created_at": community.created_at.isoformat(),
-            "is_member": is_member
+            "is_member": is_member,
+            "total_members": total_members
         }
     
     @staticmethod

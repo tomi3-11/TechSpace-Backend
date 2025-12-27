@@ -35,12 +35,11 @@ class CommunityDetailResource(Resource):
     def get(self, slug):
         community = Community.query.filter_by(slug=slug).first_or_404()
         
-        return jsonify({
-            "name": community.name,
-            "slug": community.slug,
-            "description": community.description,
-            "created_at": community.created_at.isoformat()
-        })
+        user = None
+        if get_jwt_identity():
+            user = User.query.get_or_404(get_jwt_identity())
+            
+        return CommunityService.serialize_community(community, user)
         
         
 class CommunityJoinResource(Resource):
