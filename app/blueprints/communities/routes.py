@@ -18,7 +18,7 @@ class CommunityListResource(Resource):
             
         communities = Community.query.all()
         return [
-            CommunityService.serialize_community(c, user)git 
+            CommunityService.serialize_community(c, user)
             for c in communities
         ]
         
