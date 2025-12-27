@@ -2,12 +2,26 @@ from datetime import datetime
 from flask import abort
 from app import db
 from app.models import Project, ProjectVote, ProjectStatus
+from uuid import UUID
 
 
 class ProjectService:
     
     @staticmethod
+    def is_valid_uuid(val):
+        try:
+            UUID(str(val))
+            return True
+        except ValueError:
+            return False
+    
+    
+    @staticmethod
     def create_project(data, user_id):
+        
+        if not ProjectService.is_valid_uuid(data.get("community_id")):
+            return {"message": "Invalid or missing community_id"}, 400
+        
         project = Project(
             title=data["title"],
             problem_statement=data["problem_statement"],
@@ -64,28 +78,58 @@ class ProjectService:
         
     @staticmethod
     def vote(project, user_id, value):
+        # ensure voting still open
         if project.proposal_deadline < datetime.utcnow():
             abort(400, "Voting period has ended")
-            
-        vote = ProjectVote.query.filter_by(
+
+        existing_vote = ProjectVote.query.filter_by(
             user_id=user_id,
             project_id=project.id
         ).first()
-        
-        if vote:
-            project.vote_score -= vote.value
-            vote.value = value
-        else:
-            vote = ProjectVote(
-                user_id=user_id,
-                project_id=project.id,
-                value=value
-            )
-            db.session.add(vote)
-            
+
+        # user changing vote
+        if existing_vote:
+            # remove old
+            project.vote_score -= existing_vote.value
+
+            # if same vote value, treat as remove
+            if existing_vote.value == value:
+                db.session.delete(existing_vote)
+                db.session.commit()
+
+                return {
+                    "message": "Vote removed",
+                    "new_score": project.vote_score,
+                    "user_vote": None
+                }, 200
+
+            # otherwise update
+            existing_vote.value = value
+            project.vote_score += value
+
+            db.session.commit()
+            return {
+                "message": "Vote updated",
+                "new_score": project.vote_score,
+                "user_vote": existing_vote.value
+            }, 200
+
+        # new vote
+        new_vote = ProjectVote(
+            user_id=user_id,
+            project_id=project.id,
+            value=value
+        )
+        db.session.add(new_vote)
         project.vote_score += value
         db.session.commit()
-        return project.vote_score
+
+        return {
+            "message": "Vote cast successfully",
+            "new_score": project.vote_score,
+            "user_vote": value
+        }, 201
+
     
     
     @staticmethod

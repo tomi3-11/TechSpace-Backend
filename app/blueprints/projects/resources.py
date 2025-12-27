@@ -47,11 +47,10 @@ class ProjectVoteResource(Resource):
         user = User.query.get_or_404(get_jwt_identity())
         data = request.get_json()
         value = data.get("value")
+        
         project = ProjectService.get_project(project_id)
-        score = ProjectService.vote(project, user.id, value)
-        return {
-            "vote_score": score
-        }, 200
+        response, status = ProjectService.vote(project, user.id, value)
+        return response, status
         
         
 class ProjectTransitionResource(Resource):
