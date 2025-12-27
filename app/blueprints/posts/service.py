@@ -11,7 +11,7 @@ class PostService:
         if user:
             vote = Vote.query.filter_by(
                 user_id=user.id,
-                post_id=post.id,
+                post_id=post.id
             ).first()
             user_vote = vote.value if vote else None
             
@@ -77,16 +77,4 @@ class PostService:
         if post_type:
             query = query.filter_by(post_type=post_type)
             
-        posts = query.order_by(Post.created_at.desc()).all()
-        
-        return [
-            {
-                "id": str(p.id),
-                "title": p.title,
-                "post_type": p.post_type,
-                "score": p.score,
-                "author": p.author.username,
-                "created_at": p.created_at.isoformat()
-            }
-            for p in posts
-        ]
+        return query.order_by(Post.created_at.desc()).all()
