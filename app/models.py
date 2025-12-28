@@ -182,6 +182,13 @@ class Project(db.Model):
     owner = db.relationship("User", backref=db.backref("own_projects", lazy="dynamic"))
     community = db.relationship("Community", backref=db.backref("projects", lazy="dynamic"))
     
+    votes = db.relationship(
+        "ProjectVote", 
+        backref="project", 
+        cascade="all, delete-orphan", 
+        passive_deletes=True
+    )
+    
     def to_dict(self):
         return {
             "id": self.id,
@@ -205,7 +212,7 @@ class ProjectVote(db.Model):
     value = db.Column(db.Integer, nullable=False)
     
     user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     
     __table_args__ = (
         db.UniqueConstraint("user_id", "project_id", name="unique_project_vote"),
