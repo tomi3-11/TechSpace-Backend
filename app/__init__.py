@@ -34,7 +34,11 @@ def create_app(config_object="config.Config"):
     # Enable CORS
     CORS(
         app,
-        resources={r"/api/v1/*": {"origin": "*"}},
+        resources={r"/api/v1/*": {"origins": [
+            "https://techmspace.dev",
+            "https://www.techmspace.dev",
+            "http://localhost:3000"
+            ]}},
         supports_credentials=True
     )
     
